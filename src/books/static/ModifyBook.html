@@ -1,0 +1,63 @@
+<html>
+<head><title>图书管理系统</title></head>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<body>
+<h1>欢迎光临</h1>
+<h2>修改界面</h2>
+<ul id="book-list"></ul>
+<script>
+var keyword = '';
+function searchBooks(f) {
+    keyword = f.name_or_author.value;
+    changePage(1);
+    return false;
+}
+
+function changePage(page) {
+    $.ajax({
+        type: "POST",
+        url: "http://127.0.0.1:9999/books/search",
+        contentType: "application/json; charset=utf-8",
+        data: JSON.stringify({
+            name_or_author: keyword,
+            page: 1,
+            perPage: 10
+        }),
+        dataType: "json",
+        success: function (message) {
+            if (message.code == undefined || message.code == 0) {
+                if (message.books != undefined && message.books.length > 0) {
+                    let container = jQuery("#book-search-list");   // CSS选择器
+                    container.html('');
+                    for (let i = 0; i < message.books.length; i++) {
+                        console.log(message.books[i]);
+                        container.append("<li>书名:" + message.books[i].name + "</li>");
+                        //window.location.href = "/books";
+                    }
+
+                    let pageContainer = jQuery("#book-search-page");   // CSS选择器
+                    pageContainer.html('');
+                    let maxPage = message.total / 10 + 1;
+                    for (let i = 1; i <= maxPage; i++) {
+                        pageContainer.append("<li onclick='changePage("+i+")'>" + i + "页</li>");
+                    }
+                }
+            } else {
+                alert("搜索失败: " + message.error);
+            }
+        },
+        error: function (message) {
+            console.log(arguments);
+            alert("error:" + message);
+        }
+    });
+}
+</script>
+<form method="post" action="" onsubmit="return searchBooks(this);">
+        <input type="text" name="name_or_author" />
+        <input type="submit" value="搜索"  name="submit"/>
+</form> 
+<ul id="book-search-list"></ul>
+<ul id="book-search-page"></ul>
+</body>
+</html>

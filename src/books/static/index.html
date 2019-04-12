@@ -1,0 +1,20 @@
+<html>
+<head><title>图书管理系统</title></head>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<body>
+<h1>欢迎光临</h1>
+<ul id="book-list"></ul>
+<script>
+jQuery.getJSON("http://127.0.0.1:9999/books", function(data) {
+    if (data != undefined && data.length > 0) {
+        let container = jQuery("#book-list");   // CSS选择器
+        for (let i = 0; i < data.length; i++) {
+            console.log(data[i]);
+            container.append("<li>书名:" + data[i].name + "</li>");
+        }
+    }
+});
+</script>
+<ul id="book-search-list"></ul>
+</body>
+</html>
